@@ -16,17 +16,10 @@ jobs:
       - name: Clone repository
         run: |
           git clone --branch main https://git.tishenko.dev/tish/knowledge-base.git
-          pwd
-          echo "execute cd"
-          cd knowledge-base
-          pwd
 
       - name: Build site
         run: |
-          pwd
           cd knowledge-base
-          pwd
-          echo "Before mkdocs build"
           mkdocs build
 
       - name: Deploy site
