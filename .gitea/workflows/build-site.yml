@@ -15,8 +15,8 @@ jobs:
 
       - name: Clone repository
         run: |
-          pwd
           git clone --branch main https://git.tishenko.dev/tish/knowledge-base.git
+          cd knowledge-base
 
       - name: Build site
         run: |
