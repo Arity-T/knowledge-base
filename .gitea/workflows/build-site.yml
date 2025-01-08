@@ -15,17 +15,16 @@ jobs:
 
       - name: Clone repository
         run: |
+          pwd
           git clone --branch main https://git.tishenko.dev/tish/knowledge-base.git
 
       - name: Build site
         run: |
-          cd /tmp/knowledge-base
           mkdocs build
-          # По умолчанию собранный сайт лежит в /tmp/knowledge-base/site
 
       - name: Deploy site
         run: |
           # Удаляем только содержимое /var/www/knowledge-base,
           # чтобы сохранить права и владельца самой папки
           rm -rf /var/www/knowledge-base/*
-          cp -r /tmp/knowledge-base/site/* /var/www/knowledge-base/
+          cp -r site/ /var/www/knowledge-base/site/
