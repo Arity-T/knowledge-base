@@ -2,3 +2,5 @@ site_name: Tishenko's knowledge base
 site_url: https://kb.tishenko.dev
 theme:
   name: material
+extra:
+  generator: false
