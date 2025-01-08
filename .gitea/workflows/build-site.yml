@@ -9,15 +9,23 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     steps:
-      - name: Check out code
-        uses: actions/checkout@v3
-
-      - name: Copy files to deployment folder
+      - name: Clean up old repo in /tmp
         run: |
-          rm -rf /var/www/knowledge-base/*
-          cp -r . /var/www/knowledge-base
+          rm -rf /tmp/knowledge-base
+
+      - name: Clone repository
+        run: |
+          git clone --branch main https://git.tishenko.dev/tish/knowledge-base.git
 
       - name: Build site
         run: |
-          cd /var/www/knowledge-base
+          cd /tmp/knowledge-base
           mkdocs build
+          # По умолчанию собранный сайт лежит в /tmp/knowledge-base/site
+
+      - name: Deploy site
+        run: |
+          # Удаляем только содержимое /var/www/knowledge-base,
+          # чтобы сохранить права и владельца самой папки
+          rm -rf /var/www/knowledge-base/*
+          cp -r /tmp/knowledge-base/site/* /var/www/knowledge-base/
