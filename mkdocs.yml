@@ -1,16 +1,23 @@
 site_name: Tishenko's knowledge base
 site_url: https://kb.tishenko.dev
 copyright: Copyright &copy; 2025
+repo_url: https://github.com/Arity-T/knowledge-base
+repo_name: Arity-T/knowledge-base
+edit_uri: edit/main/docs/
 theme:
   name: material
   language: ru
   favicon: assets/favicon.ico
+
+  icon:
+    repo: fontawesome/brands/github
   
   features:
     - navigation.instant
     - navigation.tabs
-
     - content.code.copy
+    - content.action.edit
+    - content.action.view
 
   palette:
     # Palette toggle for light mode
@@ -46,3 +53,6 @@ markdown_extensions:
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
+
+extra_css:
+  - stylesheets/extra.css
