@@ -3,6 +3,10 @@ site_url: https://kb.tishenko.dev
 theme:
   name: material
   favicon: assets/favicon.ico
+  
+  features:
+    - navigation.instant
+    - navigation.tabs
 
   palette:
     # Palette toggle for light mode
