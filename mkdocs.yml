@@ -2,6 +2,7 @@ site_name: Tishenko's knowledge base
 site_url: https://kb.tishenko.dev
 theme:
   name: material
+  language: ru
   favicon: assets/favicon.ico
   
   features:
