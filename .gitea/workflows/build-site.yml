@@ -9,10 +9,6 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     steps:
-      - name: Clean up old repo in /tmp
-        run: |
-          rm -rf /tmp/knowledge-base
-
       - name: Clone repository
         run: |
           git clone --branch main https://git.tishenko.dev/tish/knowledge-base.git
