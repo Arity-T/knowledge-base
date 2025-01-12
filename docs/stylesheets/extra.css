@@ -1,3 +1,7 @@
 .md-source__facts {
     display: none;
 }
+
+.md-footer {
+    margin-top: 50px;
+}
