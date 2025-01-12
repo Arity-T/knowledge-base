@@ -1,6 +1,6 @@
 # Termux
 
-[Termux](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://termux.dev/en/&ved=2ahUKEwiwtP-i8-6KAxUmCRAIHdzFLIMQFnoECBcQAQ&usg=AOvVaw3QQbzyEPPj93rvMGGQkfpC) - бесплатный эмулятор терминала Linux для Android.
+[Termux](https://termux.dev/) - бесплатный эмулятор терминала Linux для Android.
 
 ## Установка
 
@@ -65,3 +65,37 @@ cat ~/.ssh/id_ed25519.pub
 ```
 
 Осталось разве что настроить [алиасы](../git/aliases.md) и можно полноценно использовать `Git` на телефоне!
+
+
+## Подключение к телефону по SSH
+
+Для начала нужно установить `openssh`.
+
+```sh
+pkg install openssh
+```
+
+Публичный ключ с компьютера скинуть на телефон, например, через Telegram, и добавить в `~/.ssh/authorized_keys`.
+
+```sh
+cat ~/storage/downloads/Telegram/id_rsa.pub >> ~/.ssh/authorized_keys
+```
+
+Теперь нужно перезапустить сервер `ssh`.
+
+```sh
+pkill sshd
+sshd
+```
+
+Узнать IPv4 адрес телефона можно с помощью команды:
+
+```sh
+ifconfig
+```
+
+Теперь на компьютере можно подключиться к телефону по `ssh`.
+
+```sh
+ssh <your-ip-address> -p 8022 
+```
