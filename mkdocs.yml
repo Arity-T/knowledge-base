@@ -41,6 +41,7 @@ extra:
       link: https://github.com/Arity-T
 
 markdown_extensions:
+  - attr_list
   - admonition
   - pymdownx.highlight:
       anchor_linenums: true
@@ -50,6 +51,7 @@ markdown_extensions:
   - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.details
+  - pymdownx.blocks.caption
   - toc:
       permalink: "#"
       slugify: !!python/object/apply:pymdownx.slugs.slugify
