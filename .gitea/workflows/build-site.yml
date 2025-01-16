@@ -11,7 +11,7 @@ jobs:
     steps:
       - name: Clone repository
         run: |
-          git clone --branch main https://git.tishenko.dev/tish/knowledge-base.git
+          git clone --depth 1 --branch main https://git.tishenko.dev/tish/knowledge-base.git
 
       - name: Build site
         run: |
