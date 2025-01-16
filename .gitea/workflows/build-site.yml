@@ -16,6 +16,7 @@ jobs:
       - name: Build site
         run: |
           cd knowledge-base
+          pip install -r requirements.txt
           mkdocs build
 
       - name: Deploy site
