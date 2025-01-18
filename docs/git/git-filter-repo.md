@@ -75,7 +75,7 @@ pip install git-filter-repo
         commit.committer_name = new_name
         commit.committer_email = new_email
 
-        # Дата изменени и дата коммита
+        # Дата изменений и дата коммита
         commit.author_date = new_date
         commit.committer_date = new_date
     ```
