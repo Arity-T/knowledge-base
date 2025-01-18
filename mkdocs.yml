@@ -43,6 +43,11 @@ extra:
 markdown_extensions:
   - attr_list
   - admonition
+  - pymdownx.tabbed:
+      alternate_style: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
   - pymdownx.highlight:
       anchor_linenums: true
       line_spans: __span
