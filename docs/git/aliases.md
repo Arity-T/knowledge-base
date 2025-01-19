@@ -1,8 +1,5 @@
 # Алиасы команд в Git
 
-## Полезные ссылки
-- [Раздел](https://githowto.com/ru/aliases) в GitHowTo
-
 ## Мои алиасы
 Просто выполнить в терминале:
 ```sh
@@ -37,3 +34,6 @@ git config --global --get-regexp alias
 ```sh
 git config --global --unset-all alias.your-alias
 ```
+
+## Полезные ссылки
+- [Раздел в GitHowTo](https://githowto.com/ru/aliases)
