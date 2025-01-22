@@ -5,3 +5,17 @@
 .md-footer {
     margin-top: 50px;
 }
+
+/* Достаточно добавить { .code-wrap } к блоку кода, чтобы включить автоперенос строк. 
+   attr_list, очевидно, должен быть подключен в markdown_extensions.
+
+   Пример:
+
+   ```sh { .code-wrap }
+   *very long line of code here*
+   ```
+*/
+.code-wrap code {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
