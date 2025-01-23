@@ -1,6 +1,4 @@
----
-title: git-filter-repo
----
+# git-filter-repo
 
 С помощью [git-filter-repo](https://github.com/newren/git-filter-repo/) можно переписать историю репозитория.
 
