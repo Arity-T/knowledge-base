@@ -32,10 +32,11 @@ echo "<your-id-rsa.pub>" >> .ssh/authorized_keys
 ssh <user>@<IPv4>
 ```
 
-Желательно обновить все пакеты.
+Желательно обновить все пакеты и перезагрузить сервер.
 ```sh
 sudo apt update
 sudo apt upgrade
+sudo reboot
 ```
 
 Можно придумать серверу имя, оно будет отображаться в терминале после `<user>@`.
