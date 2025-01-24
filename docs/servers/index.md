@@ -79,3 +79,51 @@ Host <host>
 ```sh
 ssh <host>
 ```
+
+## Настройка фаерволла c UFW
+
+
+```sh
+# Установка UFW
+sudo apt update
+sudo apt install ufw
+
+# Открываем порт, используемый для SSH (по умолчанию 22)
+sudo ufw allow <ssh-port>/tcp
+
+# Закрываем все входные
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+
+# Включаем фаерволл
+sudo ufw enable
+
+# Показать состояние ufw и активные правила
+sudo ufw status verbose
+```
+
+??? tip "Дополнительные команды `ufw`"
+
+    ```sh
+    # Отключить фаерволл
+    sudo ufw disable
+
+    # Удалить правило (применятся настройки по умолчанию)
+    sudo ufw delete allow <port>/<protocol> # удалить разрешение
+    sudo ufw delete deny <port>/<protocol> # удалить запрет
+
+    # Сброс всех правил
+    sudo ufw reset
+
+    # Вывести логи ufw
+    sudo tail -f -n 100 /var/log/ufw.log
+
+    # Изменить уровень логирования
+    sudo ufw logging <low/medium/high>
+
+    # Разрешить доступ ко всем портам с определённого IP-адреса
+    sudo ufw allow from <IPv4>
+    
+    # Разрешить доступ к порту с определённого IP-адреса
+    sudo ufw allow from <IPv4> to any port <port>
+    ```
