@@ -212,6 +212,23 @@ sudo fail2ban-client reload
     sudo tail -f -n 100 /var/log/fail2ban.log
     ```
 
+## Дополнительно
+
+```sh
+# Вывести записи о неудачных попытках входа в систему
+sudo lastb | head -n 20
+
+# Очистить записи о неудачных попытках входа в систему
+sudo truncate -s 0 /var/log/btmp
+
+# Показывает, кто в системе прямо сейчас
+sudo w
+
+# Логи попыток входа
+sudo grep "Accepted password" /var/log/auth.log | tail -n 20
+sudo grep "Failed password" /var/log/auth.log | tail -n 20
+sudo grep "Invalid user" /var/log/auth.log | tail -n 20
+```
 
 ## Полезные ссылки
  - [Initial Server Setup with Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-20-04)
