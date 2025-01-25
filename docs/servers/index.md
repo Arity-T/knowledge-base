@@ -99,7 +99,7 @@ ssh <user>@<IPv4> -p <ssh-port>
 ```sh
 # Установка UFW
 sudo apt update
-sudo apt install ufw
+sudo apt install ufw -y
 
 # Открываем порт, используемый для SSH (по умолчанию 22)
 sudo ufw allow <ssh-port>/tcp
@@ -160,7 +160,7 @@ sudo ufw status verbose
 
 ```sh
 sudo apt update
-sudo apt install fail2ban
+sudo apt install fail2ban -y
 sudo systemctl enable fail2ban
 ```
 
@@ -190,10 +190,31 @@ maxretry = 3
 bantime = -1
 ```
 
+!!! tip "Более строгий конфиг для `fail2ban`"
+
+    Если на сервере настроена авторизация по ключу, можно смело использовать такой конфиг. 
+    
+    При авторизации по ключу, бан возможен только в случае указания неправильного имени пользователя, что исключено при использовании корректно настроенного SSH-конфига. В случае случайного бана всегда можно зайти на сервер через личный кабинет хостинга.
+
+    ```ini
+    [sshd]
+    enabled = true
+    port = <ssh-port>
+    # Если произведена хотя бы одна неудачная попытка логина,
+    maxretry = 1
+    # то банить IP навсегда.
+    bantime = -1
+    ```
+
 
 ```sh
 # Применяем настройки
 sudo fail2ban-client reload
+```
+
+После установки и первоначальной настройки `fail2ban` лучше перезагрузить сервер, иначе `fail2ban` может не заработать.
+```sh
+sudo reboot
 ```
 
 ??? tip "Дополнительные команды `fail2ban`"
@@ -228,6 +249,9 @@ sudo w
 sudo grep "Accepted password" /var/log/auth.log | tail -n 20
 sudo grep "Failed password" /var/log/auth.log | tail -n 20
 sudo grep "Invalid user" /var/log/auth.log | tail -n 20
+
+# Очистить логи с попытками входа
+sudo truncate -s 0 /var/log/auth.log
 ```
 
 ## Полезные ссылки
