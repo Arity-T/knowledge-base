@@ -154,8 +154,67 @@ sudo ufw status verbose
     sudo ufw delete allow "Nginx Full"
     ```
 
+## Настройка Fail2Ban
+
+[Fail2Ban](https://github.com/fail2ban/fail2ban) - базовая защита сервера от brute-force аттак.
+
+```sh
+sudo apt update
+sudo apt install fail2ban
+sudo systemctl enable fail2ban
+```
+
+Теперь нужно [правильно настроить Fail2Ban](https://github.com/fail2ban/fail2ban/wiki/Proper-fail2ban-configuration).
+
+```sh
+# Создаём файл с пользовательскими настройками
+sudo nano /etc/fail2ban/jail.local
+```
+
+Настройка защиты SSH сервера.
+```ini
+[sshd]
+# Единственный обязательный параметр
+enabled = true
+
+# Можно не указывать, если используется стандартный порт
+port = <ssh-port>
+
+# Пример настроек. Эти параметры можно не указывать, тогда будут использованы
+# значения по умолчанию.
+# Если в течении 24 часов
+findtime = 86400
+# произведено 3 неудачных попытки логина,
+maxretry = 3
+# то банить IP навсегда.
+bantime = -1
+```
+
+
+```sh
+# Применяем настройки
+sudo fail2ban-client reload
+```
+
+??? tip "Дополнительные команды `fail2ban`"
+
+    ```sh
+    # Вывести список активных jail's
+    sudo fail2ban-client status
+
+    # Вывести информацию по конкретному jail, в т. ч. список заблокированных IP
+    sudo fail2ban-client status <jail-name>
+
+    # Разблокировать IP
+    sudo fail2ban-client set <jail-name> unbanip <IP>
+    
+    # Вывести логи fail2ban
+    sudo tail -f -n 100 /var/log/fail2ban.log
+    ```
+
 
 ## Полезные ссылки
  - [Initial Server Setup with Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-20-04)
  - [UFW Essentials: Common Firewall Rules and Commands](https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands)
  - [VPS cheatsheet](https://habr.com/ru/articles/756804/)
+ - [Fail2Ban](https://github.com/fail2ban/fail2ban)
