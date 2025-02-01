@@ -10,7 +10,7 @@ ssh root@<IPv4>
 ```sh { .code-wrap }
 # Создаём пользователя и наделяем правом использовать `sudo`.
 adduser <user>
-adduser <username> sudo
+adduser <user> sudo
 
 # Переключаемся на нового пользователя
 su - <user>
@@ -156,7 +156,7 @@ sudo ufw status verbose
 
 ## Настройка Fail2Ban
 
-[Fail2Ban](https://github.com/fail2ban/fail2ban) - базовая защита сервера от brute-force аттак.
+[Fail2Ban](https://github.com/fail2ban/fail2ban) - базовая защита сервера от brute-force атак.
 
 ```sh
 sudo apt update
