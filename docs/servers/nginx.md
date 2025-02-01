@@ -1,10 +1,41 @@
+## Добавление сайта
 
+Создаём конфиг.
+
+=== "Терминал"
+
+    ```sh
+    sudo nano /etc/nginx/sites-available/new-site.conf
+    ```
+
+=== "Пример конфига"
+
+    ```nginx
+    server {
+        server_name example.com www.example.com;
+        listen 80;
+
+        root /var/www/new-site;
+        index index.html;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+    }
+    ```
+
+Активируем конфиг.
+
+```sh
+sudo ln -s /etc/nginx/sites-available/new-site.conf /etc/nginx/sites-enabled/
+sudo systemctl reload nginx.service
+```
 
 ## SSL-сертификат с certbot
 
 !!! tip "Актуальная версия Python"
 
-    Обычно системый `Python` достаточно старый. Для установки `certbot` может потребоваться более новая версия. Минимальные требования можно узнать на [pypi](https://pypi.org/project/certbot/).
+    Обычно системный `Python` достаточно старый. Для установки `certbot` может потребоваться более новая версия. Минимальные требования можно узнать на [pypi](https://pypi.org/project/certbot/).
 
     ```sh
     sudo apt update
