@@ -8,7 +8,6 @@
 
     ```sh
     nano ~/.inputrc
-    bind -f ~/.inputrc
     ```
 
 === ".inputrc"
@@ -17,3 +16,9 @@
     "\e[A": history-search-backward
     "\e[B": history-search-forward
     ```
+
+После обновления `.inputrc` нужно либо начать сеанс заново, либо выполнить команду.
+
+```sh
+bind -f ~/.inputrc
+```
