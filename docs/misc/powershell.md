@@ -1,5 +1,24 @@
 # Заметка о Powershell
 
+## Установка Powershell
+
+По умолчанию в Windows установлен устаревший Windows PowerShell. Установить новый Powershell можно по [инструкции в репозитории](https://github.com/PowerShell/PowerShell?tab=readme-ov-file#get-powershell).
+
+```powershell
+winget search Microsoft.PowerShell
+winget install --id Microsoft.PowerShell --source winget
+```
+
+Затем стоит [установить PowerShell как профиль по умолчанию](https://stackoverflow.com/a/75891592/17341937).
+
+Чтобы VSCode использовал PowerShell в качестве профиля по умолчанию, нужно добавить в `settings.json` следующий параметр:
+```json
+{
+    "terminal.integrated.defaultProfile.windows": "PowerShell"
+}
+```
+
+
 ## Мой Powershell profile
 
 Открыть файл настроек Powershell:
@@ -12,12 +31,14 @@ code $profile # или notepad $profile
 # Лучше заменить настоящим wget
 # https://eternallybored.org/misc/wget/
 # Скачать EXE для 64-bit и добавить в папку в PATH
-remove-item alias:wget
+# Удалять алиас нужно только в Windows PowerShell
+# remove-item alias:wget
 
 # Заменяем Invoke-WebRequest нормальным curl
 # Скачиваем curl for 64-bit тут https://curl.se/windows/
 # Из папки bin архива переносим curl.exe в папку в PATH 
-remove-item alias:curl
+# Удалять алиас нужно только в Windows PowerShell
+# remove-item alias:curl
 
 # Алиасы
 new-alias actvenv venv/Scripts/activate
@@ -28,10 +49,7 @@ function crtvenv {
     actvenv
 }
 
-function python-path { 
-    python -c "import sys; print(sys.executable)" 
-}
-
+# Аналог команды which в Linux
 # https://stackoverflow.com/a/16949127/17341937
 function which($name)
 {
