@@ -32,6 +32,12 @@ function python-path {
     python -c "import sys; print(sys.executable)" 
 }
 
+# https://stackoverflow.com/a/16949127/17341937
+function which($name)
+{
+    Get-Command $name | Select-Object -ExpandProperty Definition
+}
+
 # Модуль для автокомплита GIT https://github.com/dahlbyk/posh-git
 # Устанавливается одной командой
 # PowerShellGet\Install-Module posh-git -Scope CurrentUser -Force
