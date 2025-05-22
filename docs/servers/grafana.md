@@ -49,7 +49,8 @@ sudo chown prometheus:prometheus /usr/local/bin/promtool
     Restart=on-failure
     ExecStart=/usr/local/bin/prometheus \
         --config.file=/etc/prometheus/prometheus.yml \
-        --storage.tsdb.path=/var/lib/prometheus
+        --storage.tsdb.path=/var/lib/prometheus \
+        --storage.tsdb.retention.size=500MB
 
     [Install]
     WantedBy=multi-user.target

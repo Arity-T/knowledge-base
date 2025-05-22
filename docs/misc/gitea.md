@@ -158,6 +158,9 @@ sudo systemctl restart gitea
     [repository]
     DISABLE_STARS = true
 
+    [cron]
+    ENABLED = true
+
     [ui.meta]
     AUTHOR = Artem Tishenko: Personal Git Repository Hub
     DESCRIPTION = A personal hub for managing Git repositories by Artem Tishenko.
