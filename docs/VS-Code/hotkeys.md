@@ -26,3 +26,27 @@
     `ctrl + j` - скрыть/показать нижнюю панель (терминал, логи и т.д.).
 
     `alt + shift + r` - показать файл, выбранный в левой панели с файлами, в проводнике.
+
+    `ctrl + shift + .` - breadcrumbs
+
+## Кастомные сочетания клавиш
+
+Сочетания клавиш для быстрого создания папок и файлов через проводник внутри VS Code.
+
+- `a` - создать файл.
+- `shift + a` - создать папку.
+
+```json
+[
+    {
+        "key": "a",
+        "command": "explorer.newFile",
+        "when": "filesExplorerFocus && !inputFocus"
+    },
+    {
+        "key": "shift+a",
+        "command": "explorer.newFolder",
+        "when": "filesExplorerFocus && !inputFocus"
+    }
+]
+```
