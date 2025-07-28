@@ -37,7 +37,7 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
 extra:
-  generator: false
+  # generator: false
   social:
     - icon: fontawesome/brands/github 
       link: https://github.com/Arity-T
