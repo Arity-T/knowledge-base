@@ -1,2 +1,4 @@
 mkdocs
+pymdownx
+mkdocs-material
 mkdocs-glightbox
