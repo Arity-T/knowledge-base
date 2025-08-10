@@ -36,6 +36,10 @@
 - `a` - создать файл.
 - `shift + a` - создать папку.
 
+Быстрый переход к определению функции, метода, etc. В дополнение к F12. Удобно использовать вместе с `alt + ←/→`.
+
+- `alt + d` - перейти к определению.
+
 ```json
 [
     {
@@ -47,6 +51,11 @@
         "key": "shift+a",
         "command": "explorer.newFolder",
         "when": "filesExplorerFocus && !inputFocus"
+    },
+    {
+        "key": "alt+d",
+        "command": "editor.action.revealDefinition",
+        "when": "editorHasDefinitionProvider && editorTextFocus"
     }
 ]
 ```
