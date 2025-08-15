@@ -31,6 +31,21 @@ sudo ln -s /etc/nginx/sites-available/new-site.conf /etc/nginx/sites-enabled/
 sudo systemctl reload nginx.service
 ```
 
+Конфиг можно проверить на наличие синтаксических ошибок.
+
+```sh
+sudo nginx -t
+```
+
+## Просмотр логов
+
+По умолчанию логи находятся в `access.log` и `error.log` файлах.
+
+```sh
+sudo tail -n 20 /var/log/nginx/access.log
+sudo tail -n 20 /var/log/nginx/error.log
+```
+
 ## SSL-сертификат с certbot
 
 !!! tip "Актуальная версия Python"
