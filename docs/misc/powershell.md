@@ -2,7 +2,7 @@
 
 ## Установка Powershell
 
-По умолчанию в Windows установлен устаревший Windows PowerShell. Установить новый Powershell можно по [инструкции в репозитории](https://github.com/PowerShell/PowerShell?tab=readme-ov-file#get-powershell).
+По умолчанию в Windows установлен устаревший Windows PowerShell с кучей багов и отсутствующей поддержкой базовых операторов (`&&`, `|`, `||`). Установить новый Powershell можно по [инструкции в репозитории](https://github.com/PowerShell/PowerShell?tab=readme-ov-file#get-powershell).
 
 ```powershell
 winget search Microsoft.PowerShell
@@ -18,10 +18,21 @@ winget install --id Microsoft.PowerShell --source winget
 }
 ```
 
+## Обновление PSReadLine
 
-## Мой Powershell profile
+На старых версиях PSReadLine, который используется под капотом PowerShell, возникают различные баги: [иногда не печатаются заглавные буквы](https://github.com/PowerShell/PowerShell/issues/10794#issuecomment-542319327), [не работает `Ctrl + C` при запуске с русской раскладкой](https://github.com/PowerShell/PSReadLine/issues/1393#issuecomment-2065423282). Так что стоит сразу его обновить.
 
-Открыть файл настроек Powershell:
+Закрыть открытые PowerShell, в том числе внутри VS Code или других IDE. Запустить `cmd` от имени администратора и выполнить:
+
+```cmd
+"C:\Program Files\PowerShell\7\pwsh.exe" -noprofile -command "Install-Module PSReadLine -Force -SkipPublisherCheck -AllowPrerelease"
+```
+
+Баг с `Ctrl + C` исправлен частично. Если открыть PowerShell с русской раскладкой, то вместо `Ctrl + C` всё равно будет появляться буква `с`, но теперь достаточно переключить раскладку на английскую и всё заработает.
+
+## Мой PowerShell profile
+
+Открыть файл настроек PowerShell:
 ```powershell
 code $profile # или notepad $profile
 ```
@@ -69,7 +80,7 @@ Import-Module DockerCompletion
 # Более удобное автодополнение
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
  
-# Перемещаться по истории использования команды с помощью стрелочек
+# Удобный поиск по истории команд с помощью стрелочек
 Set-PSReadlineKeyHandler -Key UpArrow -Function HistorySearchBackward
 Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 ```
@@ -79,21 +90,6 @@ Set-PSReadlineKeyHandler -Key DownArrow -Function HistorySearchForward
 ```powershell
 Set-ExecutionPolicy RemoteSigned
 ```
-
-## Баг с uppercase
-
-В какой-то момент заглавные буквы просто перестают печататься в Powershell, это означает, что нужно обновить `PSReadLine`.
-
-Запустить Powershell от имени администратора и выполнить:
-```powershell
-Install-Module -Name PowerShellGet -Force
-```
-
-Перезапустить от имени администратора и выполнить:
-```powershell
-Install-Module PSReadLine -AllowPrerelease -Force
-```
-
 
 ## Крутой аналог grep - ripgrep
 
