@@ -8,7 +8,7 @@
     sudo nano /etc/nginx/sites-available/new-site.conf
     ```
 
-=== "Пример конфига"
+=== "Статический сайт"
 
     ```nginx
     server {
@@ -20,6 +20,49 @@
 
         location / {
             try_files $uri $uri/ =404;
+        }
+    }
+    ```
+
+=== "Веб-приложение"
+
+    ```nginx
+    server {
+        server_name giga-chill.ru www.giga-chill.ru;
+        listen 80;
+
+        # Все запросы к /api/* перенаправляются на бэкенд
+        location /api/ {
+            proxy_pass http://127.0.0.1:8081/;
+            include proxy_params;
+        }
+
+        # Спецификация API в формате OpenAPI
+        location = /api/openapi.yml {
+            alias /var/www/giga-chill/openapi.yml;
+            types { text/yaml yml yaml; }
+            charset utf-8;
+            charset_types text/yaml application/yaml text/x-yaml application/x-yaml;
+        }
+
+        # Документация API в Swagger UI
+        location = /api/swagger { return 301 /api/swagger/; }
+        location /api/swagger/ {
+            proxy_pass http://127.0.0.1:1240/;
+            include proxy_params;
+        }
+
+        # Документация API в Redocly
+        location = /api/redoc { return 301 /api/redoc/; }
+        location /api/redoc/ {
+            alias /var/www/giga-chill/redoc/;
+            index index.html;
+        }
+
+        # Все остальные запросы направляются на фронтенд
+        location / {
+            proxy_pass http://127.0.0.1:3000;
+            include proxy_params;
         }
     }
     ```
@@ -36,6 +79,25 @@ sudo systemctl reload nginx.service
 ```sh
 sudo nginx -t
 ```
+
+??? question "`open() "/etc/nginx/proxy_params" failed (2: No such file or directory)`"
+
+    Обычно файл `/etc/nginx/proxy_params` создаётся автоматически при установке Nginx, однако его несложно добавить самостоятельно, если по каким-то причинам он не был создан или был удалён.
+
+    === "Терминал"
+
+        ```sh
+        sudo nano /etc/nginx/proxy_params
+        ```
+
+    === "proxy_params"
+
+        ```nginx
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        ```
 
 ## Просмотр логов
 
