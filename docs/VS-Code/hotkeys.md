@@ -40,6 +40,7 @@
 
 - `alt + d` - перейти к определению.
 - `alt + t` - перейти к определению типа.
+- `alt + i` - перейти к реализации (актуально для Java).
 
 Обычно я отключаю `explorer.autoReveal` в настройках, чтобы боковая панель с проводником не изменялась, когда я переключаюсь по файлам. Если мне всё-таки требуется выделить открытый файл в `Explorer View`, то я использую дополнительное сочетание клавиш.
 
@@ -65,7 +66,12 @@
     {
         "key": "alt+t",
         "command": "editor.action.goToTypeDefinition",
-        "when": "editorTextFocus"
+        "when": "editorHasTypeDefinitionProvider && editorTextFocus"
+    },
+    {
+        "key": "alt+i",
+        "command": "editor.action.goToImplementation",
+        "when": "editorHasImplementationProvider && editorTextFocus"
     },
     {
         "key": "shift+alt+r",
