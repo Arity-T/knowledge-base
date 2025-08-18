@@ -40,6 +40,10 @@
 
 - `alt + d` - перейти к определению.
 
+Обычно я отключаю `explorer.autoReveal` в настройках, чтобы боковая панель с проводником не изменялась, когда я переключаюсь по файлам. Если мне всё-таки требуется выделить открытый файл в `Explorer View`, то я использую дополнительное сочетание клавиш.
+
+- `alt + shift + r` - показать открытый файл в `Explorer View`.
+
 ```json
 [
     {
@@ -56,6 +60,11 @@
         "key": "alt+d",
         "command": "editor.action.revealDefinition",
         "when": "editorHasDefinitionProvider && editorTextFocus"
+    },
+    {
+        "key": "shift+alt+r",
+        "command": "workbench.files.action.showActiveFileInExplorer",
+        "when": "editorTextFocus"
     }
 ]
 ```
