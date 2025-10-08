@@ -42,8 +42,11 @@ sudo reboot
 Можно придумать серверу имя, оно будет отображаться в терминале после `<user>@`.
 ```sh
 sudo nano /etc/hostname
-sudo nano /etc/hosts
 sudo systemctl restart systemd-hostnamed
+
+# В hosts тоже иногда есть строчка вида
+# 127.0.1.1 <hostname>
+sudo nano /etc/hosts
 ```
 
 
@@ -61,6 +64,10 @@ sudo nano /etc/ssh/sshd_config
 ```sh
 # На некоторых системах ssh вместо sshd
 sudo systemctl reload sshd
+
+# Иногда дополнительно нужно выполнить
+systemctl daemon-reload
+systemctl restart ssh.socket
 ```
 
 ??? question "А что будет, если потерять SSH-ключ?"
