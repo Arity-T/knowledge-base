@@ -1,12 +1,8 @@
 # Minecraft Server
 
-[docker-minecraft-server](https://github.com/itzg/docker-minecraft-server) - самый простой и удобный способ запуска своего Minecraft сервера.
+[docker-minecraft-server](https://github.com/itzg/docker-minecraft-server) - самый простой и удобный способ запуска своего Minecraft сервера. У проекта есть хорошая [документация](https://docker-minecraft-server.readthedocs.io/en/latest/), но всё же есть некоторые нюансы, которые стоит записать.
 
-## Шпаргалка
-
-У проекта есть неплохая [документация](https://docker-minecraft-server.readthedocs.io/en/latest/), но всё же есть некоторые нюансы, которые стоит записать.
-
-### Запуск сервера
+## Запуск сервера
 
 1. Устанавливаем [`docker`](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository). Не забываем про [post-install steps](https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user).
 2. Создаём папку для сервера.
@@ -47,7 +43,7 @@
               # Разрешаем подключаться без лицензии Minecraft
               ONLINE_MODE: false
 
-              # Указываем название игрового мира (он будет храниться в ./data/<LEVEL>)
+              # Указываем название игрового мира (будет храниться в ./data/<LEVEL>)
               # Чтобы изменить мир, достаточно изменить значение этой переменной
               # и перезапустить контейнер
               LEVEL: MyWorld
@@ -58,8 +54,13 @@
 
               # Иконка сервера
               # Надо разместить файл icon.png в ./data/
-              ICON: /data/icon.png
-              OVERRIDE_ICON: true
+              # ICON: /data/icon.png
+              # OVERRIDE_ICON: true
+
+              # Автоотключение пустого сервера
+              # ENABLE_AUTOSTOP: TRUE
+              # AUTOSTOP_TIMEOUT_EST: 300
+              # AUTOSTOP_TIMEOUT_INIT: 600
 
             volumes:
               - ./data:/data
@@ -71,19 +72,20 @@
     docker compose up -d
     ```
 
-### Остановка сервера.
+## Остановка сервера
 
-    ```sh
-    docker compose stop
-    ```
+```sh
+docker compose stop
+```
 
-### Консоль сервера.
+## Консоль сервера
 
-    ```sh
-    # ctrl + p ctrl + q - отключиться от консоли
-    # сочетание ctrl + c остановит сервер
-    docker compose attach mc
-    ```
+`ctrl + p ctrl + q` - отключиться от консоли.
+Если просто нажать `ctrl + c`, то сервер остановится.
+
+```sh
+docker compose attach mc
+```
 
 ## Домен для сервера
 
