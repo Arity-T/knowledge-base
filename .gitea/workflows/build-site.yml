@@ -8,8 +8,16 @@ on:
 jobs:
   build-and-deploy:
     runs-on: self-hosted
+    container:
+      image: python:3.12-slim
+      options: --volume /var/www/knowledge-base:/var/www/knowledge-base
     steps:
-      - name: Clone repository
+      - name: Install git
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git
+
+      - name: Checkout repository
         run: |
           git clone --depth 1 --branch main https://git.tishenko.dev/tish/knowledge-base.git
 
@@ -21,8 +29,8 @@ jobs:
 
       - name: Deploy site
         run: |
-          # Удаляем только содержимое /var/www/knowledge-base,
-          # чтобы сохранить права и владельца самой папки
           cd knowledge-base
-          rm -rf /var/www/knowledge-base/*
+          # Удаляем старую версию сайта
+          rm -rf /var/www/knowledge-base/site
+          # Копируем новую
           cp -r site/ /var/www/knowledge-base/site/
