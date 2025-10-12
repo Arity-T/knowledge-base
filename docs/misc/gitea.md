@@ -191,6 +191,8 @@ cp dump/app.ini data/gitea/conf/app.ini
     Это не полноценный конфиг, а лишь часть настроек для запуска Gitea Docker.
     Подразумевается, что конфиг был перенесён из бэкапа.
 
+    `SSH_PORT` нужно указать тот же, что и в `docker-compose.yml`.
+
     ```ini
     RUN_USER = gitea
     WORK_PATH = /data/gitea
@@ -201,7 +203,7 @@ cp dump/app.ini data/gitea/conf/app.ini
     DOMAIN           = localhost
     SSH_DOMAIN       = localhost
     HTTP_PORT        = 3000
-    SSH_PORT         = 22
+    SSH_PORT         = 28522
 
     [repository]
     ROOT = /data/git/repositories
