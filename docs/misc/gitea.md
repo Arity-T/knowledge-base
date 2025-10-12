@@ -1,11 +1,264 @@
-# Кастомизация Gitea
+# Gitea
+
+Шпаргалки актуальны для Gitea 1.24.
+
+## Установка с Docker
+
+Эта заметка лишь дополнение к [документации](https://docs.gitea.com/installation/install-with-docker#basics).
+
+=== "Терминал"
+
+    ```sh
+    # Создаём служебного пользователя
+    sudo useradd --create-home --shell /bin/bash --system gitea
+
+    # Даём пользователю права использовать Docker
+    # Строго говоря это необязательно для разворачивания Gitea, 
+    # но скорее всего и ранеры будут запускаться от этого пользователя,
+    # так что ему в любом случае потребуются права на Docker
+    sudo usermod -aG docker gitea
+
+    # Переключаемся на пользователя gitea
+    sudo su - gitea
+
+    # Узнаём его uid и gid
+    id
+
+    # Создаём docker-compose.yml по примеру
+    # Указываем переменные USER, USER_UID и USER_GID и порты
+    nano docker-compose.yml
+
+    # Создаём директорию для данных Gitea из-под пользователя gitea,
+    # иначе Docker сам создаст её из-под root
+    # см. секцию "volumes" в docker-compose.yml
+    mkdir data
+
+    # Запускаем Gitea
+    docker compose up -d
+    ```
+
+=== "docker-compose.yml"
+
+    ```yaml
+    networks:
+      gitea:
+        external: false
+
+    services:
+      server:
+        image: docker.gitea.com/gitea:1.24.6
+        container_name: gitea
+        environment:
+          - USER=<user>
+          - USER_UID=<uid>
+          - USER_GID=<gid>
+        restart: always
+        networks:
+          - gitea
+        volumes:
+          - ./data:/data
+          - /etc/timezone:/etc/timezone:ro
+          - /etc/localtime:/etc/localtime:ro
+        ports:
+          - "28500:3000"
+          - "28522:22"
+    ```
+
+Теперь можно перейти по адресу `http://<IPv4>:28500` и завершить установку Gitea.
+
+Подключиться к контейнеру можно командой.
+
+```sh
+docker exec --user gitea -it gitea bash
+
+# Уже внутри контейнера можно запускать бинарник gitea
+/usr/local/bin/gitea help
+```
+
+## Создание бэкапа
+
+Ссылка на [документацию](https://docs.gitea.com/administration/backup-and-restore).
+
+### Gitea установлена из бинарника
+
+```sh
+# gitea - это пользователь под которым запущен Gitea, часто это просто git
+sudo su - gitea
+
+mkdir gitea-backup
+cd gitea-backup
+
+# Нужно указать актуальный путь к конфигу
+/usr/local/bin/gitea dump -c /etc/gitea/app.ini
+
+# Если планируется восстановление с другой базой данных,
+# то нужно указать параметр --database <sqlite3|mysql|postgres>
+/usr/local/bin/gitea dump --database sqlite3 -c /etc/gitea/app.ini
+```
+
+### Gitea установлена с Docker
+
+Предполагается, что Gitea развёрнута с помощью Docker Compose как описано в инструкции [выше](#установка-с-docker).
+
+Подключаемся к контейнеру.
+
+```sh
+docker exec --user gitea -it gitea bash
+```
+
+Внутри контейнера выполняем.
+
+```sh
+# Бэкап нужно создать в директории /data, потому что она прокинута на хост
+cd /data
+
+# (Опционально) Создаём директорию для бэкапов
+mkdir backups
+cd backups
+
+# Нужно указать актуальный путь к конфигу
+/usr/local/bin/gitea dump -c /data/gitea/conf/app.ini
+
+# Если планируется восстановление с другой базой данных,
+# то нужно указать параметр --database <sqlite3|mysql|postgres>
+/usr/local/bin/gitea dump --database sqlite3 -c /data/gitea/conf/app.ini
+```
+
+То же самое в одну команду.
+
+```sh
+docker exec -u gitea -w /data gitea /usr/local/bin/gitea dump -c /data/gitea/conf/app.ini
+```
+
+### Перенос бэкапа на другую машину
+
+Перенести бэкап на другую машину можно, например, так:
+
+```sh
+# Запускаем HTTP сервер (с scp загрузка больших файлов займёт много времени)
+python3 -m http.server 8080
+
+# На другой машине скачиваем бэкап
+curl -O http://<IP>:8080/gitea-dump-1760203345.zip
+```
+
+
+## Восстановление из бэкапа в Docker
+
+Предполагается, что Gitea разворачивается из [бэкапа](#создание-бэкапа) с помощью Docker Compose как описано в инструкции [выше](#установка-с-docker). В [документации](https://docs.gitea.com/1.24/administration/backup-and-restore#using-docker-restore) есть соответствующая инструкция, однако она не полная и содержит ошибки.
+
+```sh
+# Если создавали пользователя по инструкции выше, 
+# то команды выполняем от него
+sudo su - gitea
+
+# Распаковываем бэкап
+unzip -q gitea-dump-*.zip -d dump
+
+# Создаём директорию для данных Gitea
+mkdir data
+
+# Копируем данные
+cp -r dump/data/ data/gitea/
+
+# Копируем репозитории
+mkdir data/git/
+cp -r dump/repos/ data/git/repositories/
+
+# Копируем кастомные стили и шаблоны
+cp -r dump/custom/. data/gitea/
+
+# Если Gitea в Docker будет работать с SQLite, 
+# то восстановить базу данных можно так.
+# Команды для других баз данныех есть в документации
+sqlite3 data/gitea/gitea.db < dump/gitea-db.sql
+
+# Копируем конфиг
+mkdir data/gitea/conf
+cp dump/app.ini data/gitea/conf/app.ini
+```
+
+Если до этого Gitea была запущена не через Docker, то нужно отредактировать конфиг.
+
+=== "Терминал"
+
+    ```sh
+    vim data/gitea/conf/app.ini
+    ```
+
+=== "`app.ini` для Docker"
+
+    Это не полноценный конфиг, а лишь часть настроек для запуска Gitea Docker.
+    Подразумевается, что конфиг был перенесён из бэкапа.
+
+    ```ini
+    RUN_USER = gitea
+    WORK_PATH = /data/gitea
+
+    [server]
+    LOCAL_ROOT_URL   = http://localhost:3000
+    APP_DATA_PATH    = /data/gitea
+    DOMAIN           = localhost
+    SSH_DOMAIN       = localhost
+    HTTP_PORT        = 3000
+    SSH_PORT         = 22
+
+    [repository]
+    ROOT = /data/git/repositories
+
+    [database]
+    PATH    = /data/gitea/gitea.db
+    DB_TYPE = sqlite3
+    HOST    = localhost:3306
+    NAME    = gitea
+    USER    = root
+    PASSWD  =
+    LOG_SQL = false
+
+    [lfs]
+    PATH = /data/git/lfs
+
+    [log]
+    ROOT_PATH = /data/gitea/log
+    ```
+
+Запускаем Gitea, скорее всего она начнёт падать с ошибкой `permission denied`, а Docker будет пытаться её перезапустить. При первом запуске Gitea создаёт директории для ssh ключей, но по какой-то причине они создаются из-под `root`, а не из-под пользователя `gitea`.
+
+```sh
+# Специально без -d, ждём когда в логах повалятся ошибки и нажимаем Ctrl+C
+docker compose up
+```
+
+Теперь нужно из-под `root` или с помощью `sudo` указать нужные права.
+
+```sh
+# Выходим из пользователя gitea (Ctrl + D или exit)
+# и выполняем команду с root правами
+sudo chown -R gitea:gitea ~gitea/data
+```
+
+Снова запускаем Gitea.
+
+```sh
+sudo su - gitea
+docker compose up -d
+```
+
+Если всё работает корректно, то файлы бэкапа можно удалить.
+
+```sh
+rm -rf dump gitea-dump-*.zip
+```
+
+
+## Кастомизация Gitea
 
 Во всех командах подразумевается, что Gitea [установлена из бинарника](https://docs.gitea.com/installation/install-from-binary) и [запускается как `systemd` сервис](https://docs.gitea.com/installation/linux-service).
 
 В документации есть страница, посвящённая [кастомизации Gitea](https://docs.gitea.com/administration/customizing-gitea).
 
 
-## Свой `css`
+### Свой `css`
 
 Добавляем ссылку на свой файл со стилями.
 
@@ -131,7 +384,7 @@ sudo systemctl restart gitea
 
 После изменения стилей, страницу в браузере нужно обновить с помощью `ctrl + f5`. 
 
-## Настройка `app.ini`
+### Настройка `app.ini`
 
 Перечень всех возможных настроек представлен в [документации](https://docs.gitea.com/administration/config-cheat-sheet).
 
@@ -172,7 +425,7 @@ sudo systemctl restart gitea
 sudo systemctl restart gitea
 ```
 
-## Изменение шаблонов страниц
+### Изменение шаблонов страниц
 
 Ищем шаблон для нужной версии в [репозитории Gitea](https://github.com/go-gitea/gitea/tree/main/templates), загружаем с помощью `wget` по такому же пути в `$GITEA_CUSTOM/templates` и редактируем.
 
