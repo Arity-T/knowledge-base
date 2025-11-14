@@ -391,7 +391,7 @@ sudo certbot --nginx -d mail.tishenko.dev -d www.mail.tishenko.dev
 Roundcube позволяет задать несколько профилей и соответствующих адресов для одного аккаунта и легко переключаться между ними через UI. Для этого в DMS нужно создать алиас для основного адреса, а затем добавить профиль через UI Roundcube в разделе `Настройки` -> `Профили`.
 
 ```sh
-docker exec -it mailserver setup email add <алиас> <основной адрес>
+docker exec -it mailserver setup alias add <алиас> <основной адрес>
 ```
 
 ### Внешний вид
