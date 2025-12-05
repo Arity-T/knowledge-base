@@ -100,6 +100,30 @@ ssh <host>
 ssh <user>@<IPv4> -p <ssh-port>
 ```
 
+## Создание SWAP-файла
+
+Лучше пожертвовать пару гигабайт от объёма диска сервера на SWAP-файл, чтобы уменьшить вероятность того, что в один прекрасный момент сервер крашнется из-за нехватки памяти.
+
+```sh
+sudo fallocate -l 2G /swapfile
+sudo chmod 600 /swapfile
+sudo mkswap /swapfile
+sudo swapon /swapfile
+sudo swapon --show
+
+# Чтобы swap-файл подключался при перезагрузке сервера
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+```
+
+Чтобы удалить SWAP-файл, нужно выполнить следующие команды.
+
+```sh
+sudo swapoff /swapfile
+
+# Удаляем строку со swap-файлом
+sudo nano /etc/fstab
+```
+
 ## Настройка фаерволла c UFW
 
 
