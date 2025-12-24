@@ -74,6 +74,8 @@
     Также при цитировании можно указывать страницу 
     или раздел, например: \cite[с. 10]{whisper}.
 
+    Сайты и статьи в интернете можно цитировать так: \cite{overleaf}.
+
     % Выводим список литературы
     \printbibliography
 
@@ -82,10 +84,9 @@
 
 === "refs.bib"
 
-    Код `bibtex` обычно генерируется автоматически на сайтах с научными статьями. Например, этот код выдаёт Arxiv по нажатию кнопки `Export BibTeX Citation`. На ScienceDirect есть аналогичная кнопка `Cite -> Export citation to BibTeX`.
+    Код `bibtex` обычно генерируется автоматически на сайтах с научными статьями. Например, на Arxiv по нажатию кнопки `Export BibTeX Citation`, на ScienceDirect - `Cite -> Export citation to BibTeX`.
 
     ```bibtex
-
     @misc{whisper,
       title={Robust Speech Recognition via Large-Scale Weak Supervision}, 
       author={Alec Radford and Jong Wook Kim and Tao Xu and 
@@ -95,5 +96,11 @@
       archivePrefix={arXiv},
       primaryClass={eess.AS},
       url={https://arxiv.org/abs/2212.04356}, 
+    }
+    @online{overleaf,
+      title   = {Bibliography management with biblatex},
+      author  = {{Overleaf}},
+      url     = {https://www.overleaf.com/learn/latex/Bibliography_management_with_biblatex},
+      urldate = {2025-12-24},
     }
     ```
