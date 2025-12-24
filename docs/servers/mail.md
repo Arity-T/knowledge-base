@@ -283,7 +283,7 @@ docker exec -it mailserver setup help
 
 ## Roundcube
 
-Roundcube проще всего развернуть с помощью Docker Compose. Актуальную версию образа можно выбрать на [Docker Hub](https://hub.docker.com/r/roundcube/roundcubemail). Там же можно посмотреть список переменных окружения и их значения. Далее подразумевается, что выбран образ `apache-nonroot`, а также что для управления почтой создан отдельный пользователь `vmail` с uid/gid 5000, как показано в инструкции [выше](#настройка-docker-mailserver).
+Roundcube проще всего развернуть с помощью Docker Compose. Актуальную версию образа можно выбрать на [Docker Hub](https://hub.docker.com/r/roundcube/roundcubemail). Там же можно посмотреть список переменных окружения и их значения. Далее подразумевается, что выбран образ `apache-nonroot`, а также что для управления почтой создан отдельный пользователь `vmail` с uid/gid 5000, как показано в инструкции [выше](#docker-mailserver).
 
 === "Терминал"
 
