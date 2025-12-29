@@ -23,6 +23,23 @@ Get-Service -Name ssh-agent | select -property status,name,starttype
 git config --global core.sshCommand "C:/Windows/System32/OpenSSH/ssh.exe"
 ```
 
+### Установка на Linux
+
+На Linux `ssh-agent` как правило уже установлен и активирован из коробки. При перезагрузке системы нужно будет добавлять ключи заново. Можно настроить `ssh` так, чтобы ключи добавлялись автоматически, тогда пароль от каждого ключа будет запрашиваться только один раз.
+
+=== "Терминал"
+
+    ```sh
+    nano ~/.ssh/config
+    ```
+
+=== "~/.ssh/config"
+
+    ```ini
+    Host *
+        AddKeysToAgent yes
+    ```
+
 ### Использование
 
 !!! warning "Security warning"
