@@ -9,7 +9,7 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     container:
-      image: python:3.12-slim
+      image: astral/uv:python3.12-bookworm-slim
       options: --volume /var/www/knowledge-base:/var/www/knowledge-base
     steps:
       - name: Install git
@@ -21,11 +21,15 @@ jobs:
         run: |
           git clone --depth 1 --branch main https://git.tishenko.dev/tish/knowledge-base.git
 
+      - name: Sync deps (locked)
+        run: |
+          cd knowledge-base
+          uv sync --frozen
+
       - name: Build site
         run: |
           cd knowledge-base
-          pip install -r requirements.txt
-          mkdocs build
+          uv run mkdocs build
 
       - name: Deploy site
         run: |
