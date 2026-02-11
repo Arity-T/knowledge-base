@@ -244,3 +244,33 @@ p10k configure
     # Type Path               Mode UID GID Age Argument
     d /home/USERNAME/Downloads 0755 USER USER 7d
     ```
+
+## Настройка zram
+
+[zram-tools](https://packages.debian.org/sid/zram-tools) позволяет оптимизировать использование памяти, сжимая редко используемые данные в RAM.
+
+```sh
+sudo apt install zram-tools
+reboot
+
+# Проверить, что swap работает
+swapon --show
+```
+
+По умолчанию под swap выделяется 50% памяти, можно изменить:
+
+```sh
+sudo nano /etc/default/zramswap
+sudo systemctl restart zramswap
+sudo systemctl status zramswap
+```
+
+Также при использовании zram рекомендуют уменьшать swappiness. Этот параметр говорит системе, насколько часто ей стоит использовать swap файл.
+
+```sh
+echo "vm.swappiness=10" | sudo tee /etc/sysctl.d/99-swappiness.conf
+sudo sysctl -p /etc/sysctl.d/99-swappiness.conf
+
+# Проверка
+cat /proc/sys/vm/swappiness
+```
