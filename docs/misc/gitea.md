@@ -98,6 +98,36 @@ cd gitea-backup
 
 ### Gitea установлена с Docker
 
+!!! info "Есть вариант проще"
+
+    Если Gitea запускается через Docker Compose, как показано в инструкции [выше](#установка-с-docker) и в качестве базы данных используется SQLite, то для создания полного бэкапа достаточно сохранить папку `data`. Её же достаточно перенести на другую машину при переезде.
+
+    ```sh
+    # Предварительно нужно остановить Gitea
+    sudo su - gitea
+    docker compose stop
+    exit
+
+    mkdir gitea-backup
+    cd gitea-backup
+
+    # Запускать надо с root правами, потому что некоторые файлы
+    # внутри волюма создаются из-под root
+    sudo tar -czf gitea-backup.tar.gz -C /home/gitea data
+    sudo chown $USER:$USER gitea-backup.tar.gz
+
+    # Опционально: можно зашифровать бэкап хотя бы просто паролем
+    gpg -c gitea-backup.tar.gz
+    rm gitea-backup.tar.gz
+
+    # Команда для расшифровки
+    # gpg -d gitea-backup.tar.gz.gpg > gitea-backup.tar.gz
+
+    # Перезапускаем Gitea
+    sudo su - gitea
+    docker compose up -d
+    ```
+
 Предполагается, что Gitea развёрнута с помощью Docker Compose как описано в инструкции [выше](#установка-с-docker).
 
 Подключаемся к контейнеру.
@@ -145,6 +175,11 @@ curl -O http://<IP>:8080/gitea-dump-1760203345.zip
 
 ## Восстановление из бэкапа в Docker
 
+!!! info "Есть вариант проще"
+
+    Если в качестве бэкапа Gitea была сохранена папка `data`. То для восстановления Gitea на другой машине достаточно просто пройти по инструкции [установки Gitea с Docker](#установка-с-docker), но перед запуском просто скопировать папку `data` по пути, указанном в `docker-compose.yml`.
+
+
 Предполагается, что Gitea разворачивается из [бэкапа](#создание-бэкапа) с помощью Docker Compose как описано в инструкции [выше](#установка-с-docker). В [документации](https://docs.gitea.com/1.24/administration/backup-and-restore#using-docker-restore) есть соответствующая инструкция, однако она не полная и содержит ошибки.
 
 ```sh
@@ -165,17 +200,23 @@ cp -r dump/data/ data/gitea/
 mkdir data/git/
 cp -r dump/repos/ data/git/repositories/
 
+# Копируем SSH ключи, если есть
+mkdir data/ssh
+cp -r dump/ssh/ data/ssh/
+
 # Копируем кастомные стили и шаблоны
-cp -r dump/custom/. data/gitea/
+# Актуально, если $GITEA_CUSTOM не совпадала с data/gitea
+# cp -r dump/custom/. data/gitea/
 
 # Если Gitea в Docker будет работать с SQLite, 
 # то восстановить базу данных можно так.
+# sqlite3 data/gitea/gitea.db < dump/gitea-db.sql
+# Если файл data/gitea/gitea.db уже есть, то и восстанавливать ничего не нужно
 # Команды для других баз данныех есть в документации
-sqlite3 data/gitea/gitea.db < dump/gitea-db.sql
 
-# Копируем конфиг
-mkdir data/gitea/conf
-cp dump/app.ini data/gitea/conf/app.ini
+# Копируем конфиг, если изначально он был в другом месте
+# mkdir data/gitea/conf
+# cp dump/app.ini data/gitea/conf/app.ini
 ```
 
 Если до этого Gitea была запущена не через Docker, то нужно отредактировать конфиг.
