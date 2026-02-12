@@ -17,6 +17,7 @@ nc -vz smtp.gmail.com 587
 Если порты закрыты, то можно обратиться в поддержку хостинг провайдера с запросом на открытие портов.
 
 ??? abstract "Пример обращения в поддержку"
+
     ```
     Добрый день!
 
@@ -26,6 +27,11 @@ nc -vz smtp.gmail.com 587
 
     Спасибо!
     ```
+
+??? question "Если нельзя открыть исходящие на 25/tcp?"
+
+    Не все хостинги позволяют открывать исходящие соединения на порт 25, даже через поддержку.
+    В этом случае можно использовать SMTP Relay, например, [Cloud Postbox](https://yandex.cloud/ru/services/postbox). Инструкция по его настройке приведена [ниже](#smtp-relay).
 
 ## Настройка DNS
 
@@ -452,3 +458,32 @@ v=BIMI1; l=https://tishenko.dev/logo.svg;
 ```
 
 Однако в gmail и некоторых других почтовых клиентах он всё равно не будет отображаться, так как они требуют для этого платные VMC сертификаты.
+
+## SMTP Relay
+
+Не всегда есть возможность открыть исходящие соединения на порт 25. Для этого можно использовать SMTP Relay. Это отдельный сервис, у которого есть свои сервера с открытыми почтовыми портами. Бонусом является то, что при использовании подобных сервисов обычно требуется меньше настроек DNS, а также письма с IP адресов таких сервисов практически не попадают в спам. [Yandex Cloud Postbox](https://yandex.cloud/ru/services/postbox) это пример подобного сервиса. Вообще говоря, он предназначен для транзакционных рассылок, то есть сообщений с подтверждением разных действий, но его можно использовать и для отправки писем с личной почты.
+
+1. После регистрации, нужно создать почтовый адрес для отправки писем. При создании нужно указать домен, например, `tishenko.dev` и выбрать простой вариант настройки DKIM.
+2. Подтверждаем принадлежность домена. Для этого нужно добавить две CNAME записи в DNS. Для каждого адреса генерируются уникальные ключи, ниже пример для домена `tishenko.dev`.
+```dns
+egt9mf1fnu9td07bs857-1._domainkey	IN	CNAME	egt9mf1fnu9td07bs857-1.dkim.pstbx.ru.
+egt9mf1fnu9td07bs857-2._domainkey	IN	CNAME	egt9mf1fnu9td07bs857-2.dkim.pstbx.ru.
+```
+Затем нужно подождать пока записи появятся в DNS, затем запустить проверку в Cloud Postbox. Посмотреть процесс распространения записей можно с помощью сайта [DNS Checker](egt9mf1fnu9td07bs857-1._domainkey.tishenko.dev).
+3. Добавляем TXT запись для домена `tishenko.dev`.
+```dns
+v=spf1 include:_spf.yandex.net -all
+```
+
+Дальше настраиваем Docker Mailserver для работы с SMTP Relay. [Документация DMS](https://docker-mailserver.github.io/docker-mailserver/latest/config/advanced/mail-forwarding/relay-hosts) по настройке SMTP Relay и [документация Yandex Cloud Postbox](https://yandex.cloud/en/docs/tutorials/serverless/postfix-integration) в помощь. В `mailserver.env` нужно добавить следующие переменные:
+
+```sh
+# Отправка всей исходящей почты через Postbox
+DEFAULT_RELAY_HOST=[postbox.cloud.yandex.net]:587
+
+# SMTP-учётка Postbox:
+RELAY_USER=SMTP_USERNAME
+RELAY_PASSWORD=SMTP_PASSWORD
+```
+
+Для получения паролей надо создать [сервисный аккаунт](https://yandex.cloud/ru/docs/iam/operations/sa/create), назначить ему роль [`postbox.sender`](https://yandex.cloud/ru/docs/tutorials/serverless/postfix-integration#infrastructure), а затем создать API-ключ с областью действия `yc.postbox.send`. Идентификатор ключа можно использовать как `RELAY_USER`, а сам секретный ключ как `RELAY_PASSWORD`.
