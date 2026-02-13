@@ -1,9 +1,11 @@
 site_name: Tish Knowledge Base
 site_url: https://kb.tishenko.dev
-copyright: Copyright &copy; 2025
+copyright: Copyright &copy; {year}
 repo_url: https://github.com/Arity-T/knowledge-base
 repo_name: Arity-T/knowledge-base
 edit_uri: edit/main/docs/
+hooks:
+  - hooks.py
 theme:
   name: material
   language: ru
@@ -12,7 +14,7 @@ theme:
 
   icon:
     repo: fontawesome/brands/github
-  
+
   features:
     - navigation.indexes
     - navigation.instant
@@ -39,7 +41,7 @@ theme:
 extra:
   # generator: false
   social:
-    - icon: fontawesome/brands/github 
+    - icon: fontawesome/brands/github
       link: https://github.com/Arity-T
 
 markdown_extensions:
