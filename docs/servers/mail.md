@@ -375,7 +375,7 @@ sudo certbot --nginx -d mail.tishenko.dev -d www.mail.tishenko.dev
 
 ### Конфиг
 
-Некоторые настройки Roundcube нельзя задать через переменные окружения, они задаются в файле `config.inc.php`. Например, "название продукта", оно отображается в заголовке страницы, на странице входа и в других местах. По умолчанию это `Roundcube Webmail`. Его можно изменить в `config/config.inc.php`.
+Некоторые настройки Roundcube нельзя задать через переменные окружения, они задаются в файле `config.inc.php`. Например, "название продукта", оно отображается в заголовке страницы, на странице входа и в других местах. По умолчанию это `Roundcube Webmail`. Также по умолчанию в Roundcube очень короткое время сессии, всего 10 минут, после которых нужно логиниться заново. Эти параметры можно изменить в `config/config.inc.php`.
 
 === "Терминал"
 
@@ -388,7 +388,14 @@ sudo certbot --nginx -d mail.tishenko.dev -d www.mail.tishenko.dev
     ```php
     <?php
     $config['product_name'] = 'Tish\'s Mail';
+    $config['session_lifetime'] = 60 * 24;
     ```
+
+После изменения конфига нужно перезапустить Roundcube.
+
+```sh
+docker compose restart roundcube
+```
 
 ### Настройки аккаунта
 
