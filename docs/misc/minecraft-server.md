@@ -280,3 +280,81 @@ DNS-записи распространяются не мгновенно, но 
 ```sh
 ./run-and-backup.sh -h
 ```
+
+## Загрузка карт
+
+Карту нужно загрузить на сервер и разместить в папке `./data/`. Название папки с картой нужно будет указать в переменной `LEVEL` в файле `docker-compose.yml`. Также, почти все карты требуют включения командных блоков, это делается с помощью переменной `ENABLE_COMMAND_BLOCK`. 
+
+=== "Терминал"
+    ```sh
+    nano docker-compose.yml
+    ```
+
+=== "docker-compose.yml"
+    ```yaml
+    environment:
+        LEVEL: "MapName"
+        ENABLE_COMMAND_BLOCK: "true"
+    ```
+
+### Загрузка ресурспаков
+
+Многие карты предоставляют свои ресурспаки. Игроки, конечно, могут сами загрузить ресурспак и выбрать его в настройках, но можно настроить автоматическую загрузку при входе на сервер. Для этого ресурспак должен быть доступен для скачивания по публичной ссылке.
+
+=== "Терминал"
+
+    ```sh
+    sudo mkdir -p /var/www/minecraft/packs/
+    sudo mv pack.zip /var/www/minecraft/packs/
+    sudo chmod -R 755 /var/www/minecraft/
+
+    # Настройка nginx
+    sudo nano /etc/nginx/sites-available/minecraft.tishenko.dev
+    sudo ln -s /etc/nginx/sites-available/minecraft.tishenko.dev /etc/nginx/sites-enabled/
+    sudo certbot --nginx -d minecraft.tishenko.dev -d www.minecraft.tishenko.dev
+    ```
+
+=== "Пример конфига Nginx"
+
+    В этом примере ресурспаки будут доступны для скачивания по ссылке вида `https://minecraft.tishenko.dev/packs/pack.zip`. `https` будет работать после получения [SSL сертификата](../servers/nginx.md#ssl-сертификат-с-certbot).
+
+    ```nginx
+    limit_conn_zone $binary_remote_addr zone=conn_limit:10m;
+
+    server {
+        listen 80;
+        server_name minecraft.tishenko.dev www.minecraft.tishenko.dev;
+
+        location = /packs {
+            return 301 /packs/;
+        }
+
+        location /packs/ {
+            alias /var/www/minecraft/packs/;
+            autoindex on;
+            limit_conn conn_limit 2;
+            limit_rate_after 1m;
+            limit_rate 2560k;
+        }
+    }
+    ```
+
+Название файла ресурспака нужно будет указать в переменной `RESOURCE_PACK` в файле `docker-compose.yml`. Опционально можно указать SHA1 хэш файла ресурспака в переменной `RESOURCE_PACK_SHA1`. Можно сделать загрузку ресурспака обязательной при подключении к серверу с помощью переменной `RESOURCE_PACK_ENFORCE`.
+
+=== "Терминал"
+
+    ```sh
+    # Опционально
+    # sha1sum /var/www/minecraft/packs/pack.zip
+
+    nano docker-compose.yml
+    ```
+
+=== "docker-compose.yml"
+
+    ```yaml
+    environment:
+        RESOURCE_PACK: "https://.../yourpack.zip"
+        RESOURCE_PACK_SHA1: "0123abcd... (40 hex)"
+        RESOURCE_PACK_ENFORCE: "true"
+    ```
